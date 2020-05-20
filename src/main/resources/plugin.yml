@@ -1,0 +1,12 @@
+name: Backpack
+version: ${project.version}
+main: me.iloveeatmuffin.backpack.Backpack
+api-version: 1.13
+authors: [ILoveEatMuffin]
+commands:
+  backpack:
+    description: 背包owob
+    usage: /<command>
+    aliases:
+      - bp
+

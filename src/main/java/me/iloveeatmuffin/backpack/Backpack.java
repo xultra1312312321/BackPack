@@ -65,16 +65,7 @@ public final class Backpack extends JavaPlugin implements Listener {
         }
     }
 
-    public void saveItem(ConfigurationSection section, ItemStack itemStack) {
-        section.set("type", itemStack.getType().name());
-        section.set("amount", itemStack.getAmount());
 
-    }
-
-    public ItemStack loadItem(ConfigurationSection section) {
-        return new ItemStack(Material.valueOf(section.getString("type")), section.getInt("amount"));
-
-    }
 
 
 

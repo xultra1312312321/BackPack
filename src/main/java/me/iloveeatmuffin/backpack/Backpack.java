@@ -2,41 +2,80 @@ package me.iloveeatmuffin.backpack;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
-
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 
 public final class Backpack extends JavaPlugin implements Listener {
+
     private Connection connection;
-    public String host,database,username,password,table;
+    public String host, database, username, password, table;
     public int port;
     FileManager fm = FileManager.getInstance();
+    public HashMap<UUID, Inventory> backpacks = new HashMap<UUID, Inventory>();
 
 
     @Override
     public void onEnable() {
         FileManager.getInstance().setup(this);
-        this.getServer().getPluginManager().registerEvents(new PlayerCloseInvEvent(), this);
-        getCommand("backpack").setExecutor(new BackPackCommand());
+        this.getServer().getPluginManager().registerEvents(new BackPackEvent(), this);
+        getCommand("backpack").setExecutor(new BackPackEvent());
         loadConfig();
         mysqlSetup();
 
     }
-    public void loadConfig(){
+
+    public void loadConfig() {
         getConfig().options().copyDefaults(true);
         saveConfig();
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        for (Map.Entry<UUID, Inventory> entry : backpacks.entrySet()) {
+            if (!fm.getConfig().contains("backpacks." + entry.getKey())) {
+                fm.getConfig().createSection("backpacks." + entry.getKey());
+            }
+
+            char c = 'a';
+            for (ItemStack itemStack : entry.getValue()) {
+                if (itemStack != null) {
+                    saveItem(fm.getConfig().createSection("backpacks." + entry.getKey() + "." + c++), itemStack);
+                }
+            }
+
+            try {
+                fm.saveConfig();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
+    public void saveItem(ConfigurationSection section, ItemStack itemStack) {
+        section.set("type", itemStack.getType().name());
+        section.set("amount", itemStack.getAmount());
+
+    }
+
+    public ItemStack loadItem(ConfigurationSection section) {
+        return new ItemStack(Material.valueOf(section.getString("type")), section.getInt("amount"));
+
+    }
+
 
 
 

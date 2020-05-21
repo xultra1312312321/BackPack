@@ -1,8 +1,8 @@
+
 package me.iloveeatmuffin.backpack;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
@@ -16,6 +16,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -65,7 +66,18 @@ public final class Backpack extends JavaPlugin implements Listener {
         }
     }
 
+    public void saveItem(ConfigurationSection section, ItemStack itemStack) {
+        section.set("itemstack", itemStack);
 
+
+    }
+
+    public ItemStack loadItem(ConfigurationSection section) {
+
+        return new ItemStack(Objects.requireNonNull(section.getItemStack("itemstack")));
+
+
+    }
 
 
 

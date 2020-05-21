@@ -24,14 +24,13 @@ public class BackPackEvent implements Listener, CommandExecutor {
     FileManager fm = FileManager.getInstance();
     Backpack plugin = (Backpack)Backpack.getPlugin(Backpack.class);
 
-     @EventHandler
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        Inventory inv = Bukkit.getServer().createInventory(e.getPlayer(), InventoryType.CHEST, "背包");
+        Inventory inv = Bukkit.getServer().createInventory(e.getPlayer(), InventoryType.CHEST, "Backpack");
 
         if (fm.getConfig().contains("backpacks." + e.getPlayer().getUniqueId())) {
-            for (String i : fm.getConfig().getConfigurationSection("backpacks." + e.getPlayer().getUniqueId()).getKeys(false)) {
-                ItemStack item = fm.getConfig().getItemStack("backpacks." + e.getPlayer().getUniqueId().toString() + "." + i);
-                inv.addItem(item);
+            for (String item : fm.getConfig().getConfigurationSection("backpacks." + e.getPlayer().getUniqueId()).getKeys(false)) {
+                inv.addItem(this.plugin.loadItem(fm.getConfig().getConfigurationSection("backpacks." + e.getPlayer().getUniqueId() + "." + item)));
             }
         }
 
